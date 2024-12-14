@@ -1,127 +1,90 @@
+// Adicionando eventos ao calendário
 const calendar = document.getElementById('calendar');
 const monthYear = document.getElementById('monthYear');
 const days = document.getElementById('days');
 const prevMonthButton = document.getElementById('prev-month');
 const nextMonthButton = document.getElementById('next-month');
-const modal = document.getElementById('myModal');
-const modalContent = document.querySelector('.modal-content');
 
 let currentDate = new Date();
 
-function renderCalendar(date){
+// Array de eventos simulados
+const eventos = [
+    { data: '2024-03-04', titulo: 'Glow Fashion Party', descricao: 'Local: Estádio da Nossa Senhora do Monte\nIngressos:\nÁrea normal: 8.000 Kz\nÁrea VIP: 15.000 Kz\nMesas: 50.000 Kz, 80.000 Kz, 150.000 Kz' },
+    { data: '2024-03-04', titulo: 'Teatro e poesia com Levart Huíla', descricao: 'Local: Centro de Artes do Lubango\nIngressos: Área normal: 1.500 Kz' },
+    { data: '2024-03-04', titulo: 'Workshop de Empreendedorismo', descricao: 'Local: Mediateca do Lubango\nEntrada: Gratuita' },
+    { data: '2024-12-15', titulo: 'Festa X', descricao: 'No dia 15 de Dezembro de 2024' },
+    { data: '2024-12-25', titulo: 'Natal', descricao: 'Comemoração do Natal' },
+    { data: '2024-12-31', titulo: 'Réveillon', descricao: 'Celebração de Ano Novo' },
+];
+
+// Renderizar calendário
+function renderCalendar(date) {
     const year = date.getFullYear();
     const month = date.getMonth();
-    const today = new Date(); //Função para criar o ano actual
 
-    monthYear.textContent = `${date.toLocaleString('pt-PT',
-        {month: 'long'})} ${year}`;
+    monthYear.textContent = `${date.toLocaleString('pt-PT', { month: 'long' })} ${year}`;
 
     const firstDayOfMonth = new Date(year, month, 1).getDay();
-    const lastDayOfMonth = new Date(year, month +1, 0).getDate();
+    const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
 
     days.innerHTML = '';
 
-    for(let i =0; i<firstDayOfMonth; i++){
-        days.innerHTML += '<div></div>'
+    for (let i = 0; i < firstDayOfMonth; i++) {
+        days.innerHTML += '<div></div>';
     }
 
-    for(let i=1; i<=lastDayOfMonth; i++){
+    for (let i = 1; i <= lastDayOfMonth; i++) {
         const dayElement = document.createElement('div');
         dayElement.textContent = i;
 
-        if(year == today.getFullYear()
-            && month == today.getMonth()
-            && i == today.getDate())
-            {
-            dayElement.classList.add('active');
+        const dataFormatada = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+
+        // Verificar se há evento neste dia
+        const evento = eventos.find(e => e.data === dataFormatada);
+        if (evento) {
+            dayElement.classList.add('event-day');
+            dayElement.addEventListener('click', () => exibirDetalhesEvento(evento));
         }
 
-        const dayOfweek = new Date(year, month, i).getDay();
-
-        if(dayOfweek == today.getDay()){
-            dayElement.classList.add('highlight');
-        }
-
-        
         days.appendChild(dayElement);
     }
-
 }
 
-//ALETERAÇÃO DOS MESES
-//########################################
-//MÊS ANTERIOR
-prevMonthButton.addEventListener('click', ()=>{
+// Exibir detalhes do evento
+function exibirDetalhesEvento(evento) {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
 
-    currentDate.setMonth(currentDate.getMonth() -1)
-    renderCalendar(currentDate); 
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'close';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.addEventListener('click', () => modal.remove());
+
+    const eventTitle = document.createElement('h2');
+    eventTitle.textContent = evento.titulo;
+
+    const eventDescription = document.createElement('p');
+    eventDescription.textContent = evento.descricao;
+
+    modalContent.appendChild(closeBtn);
+    modalContent.appendChild(eventTitle);
+    modalContent.appendChild(eventDescription);
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+}
+
+// Alteração dos meses
+prevMonthButton.addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar(currentDate);
 });
 
-//########################################
-//MÊS SEGUINTE
-nextMonthButton.addEventListener('click', ()=>{
-
-    currentDate.setMonth(currentDate.getMonth() +1)
+nextMonthButton.addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
     renderCalendar(currentDate);
 });
 
 renderCalendar(currentDate);
-
-
-// function renderCalendar(month, year) {
-
-//     monthYear.textContent = `${date.toLocaleString('pt-PT',
-//         {month: 'long'})} ${year}`;
-
-//     daysContainer.innerHTML = ''; // Limpar os dias anteriores
-
-//     // Criar os dias
-//     let date = new Date(year, month, 1);
-//     let daysInMonth = getDaysInMonth(year, month);
-//     let firstDay = getFirstDayOfMonth(year, month);
-
-//     // Preencher os dias vazios do início do mês
-//     for (let i = 0; i < firstDay; i++) {
-//         const dayElement = document.createElement('div');
-//         dayElement.classList.add('empty-day');
-//         daysContainer.appendChild(dayElement);
-//     }
-
-//     // Criar os dias do mês
-//     for (let i = 1; i <= daysInMonth; i++) {
-//         const dayElement = document.createElement('div');
-//         dayElement.textContent = i;
-
-//         // Verificar se há algum evento para este dia
-//         // ... (sua lógica para verificar eventos)
-
-//         daysContainer.appendChild(dayElement);
-//         date.setDate(date.getDate() + 1);
-//     }
-// }
-
-// // Função para abrir o modal
-// function openModal(event) {
-//     // ... (implementação para mostrar o modal com os detalhes do evento)
-// }
-
-// // Função para fechar o modal
-// function closeModal() {
-//     modal.style.display = 'none';
-// }
-
-// // Eventos
-// prevMonthButton.addEventListener('click', () => {
-//     currentDate.setMonth(currentDate.getMonth() - 1);
-//     generateCalendar(currentDate.getMonth(), currentDate.getFullYear());
-// });
-
-// nextMonthButton.addEventListener('click', () => {
-//     currentDate.setMonth(currentDate.getMonth() + 1);
-//     generateCalendar(currentDate.getMonth(), currentDate.getFullYear());
-// });
-
-// closeButton.addEventListener('click', closeModal);
-
-// // Gerar o calendário inicial
-// generateCalendar(currentDate.getMonth(), currentDate.getFullYear());
