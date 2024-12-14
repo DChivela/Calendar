@@ -39,19 +39,19 @@ function renderCalendar(date) {
 
         const dataFormatada = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
 
-        // Verificar se há evento neste dia
-        const evento = eventos.find(e => e.data === dataFormatada);
-        if (evento) {
+        // Verificar se há eventos neste dia
+        const eventosDoDia = eventos.filter(e => e.data === dataFormatada);
+        if (eventosDoDia.length > 0) {
             dayElement.classList.add('event-day');
-            dayElement.addEventListener('click', () => exibirDetalhesEvento(evento));
+            dayElement.addEventListener('click', () => exibirDetalhesEventos(eventosDoDia));
         }
 
         days.appendChild(dayElement);
     }
 }
 
-// Exibir detalhes do evento
-function exibirDetalhesEvento(evento) {
+// Exibir detalhes dos eventos do dia
+function exibirDetalhesEventos(eventosDoDia) {
     const modal = document.createElement('div');
     modal.className = 'modal';
 
@@ -64,14 +64,26 @@ function exibirDetalhesEvento(evento) {
     closeBtn.addEventListener('click', () => modal.remove());
 
     const eventTitle = document.createElement('h2');
-    eventTitle.textContent = evento.titulo;
+    eventTitle.textContent = 'Eventos do Dia';
 
-    const eventDescription = document.createElement('p');
-    eventDescription.textContent = evento.descricao;
-
-    modalContent.appendChild(closeBtn);
+    modalContent.appendChild(closeBtn); // Garantir que o close esteja no topo
     modalContent.appendChild(eventTitle);
-    modalContent.appendChild(eventDescription);
+
+    eventosDoDia.forEach(evento => {
+        const eventContainer = document.createElement('div');
+        eventContainer.className = 'event-container';
+
+        const eventTitulo = document.createElement('h3');
+        eventTitulo.textContent = evento.titulo;
+
+        const eventDescricao = document.createElement('p');
+        eventDescricao.textContent = evento.descricao;
+
+        eventContainer.appendChild(eventTitulo);
+        eventContainer.appendChild(eventDescricao);
+        modalContent.appendChild(eventContainer);
+    });
+
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 }
