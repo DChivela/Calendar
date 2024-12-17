@@ -3,7 +3,7 @@
 Nele é apresentado um dia com evento assinalado com um pontinho vermelho, os detalhes são exibidos com um clique no dia com evento, após o clique é realizada a exibição dos eventos deste dia com os detalhes dos mesmos.
 
 # 2. Estrutura do Projeto
-Criamos dois Web Components:
+Criamos dois Web Components em um único ficheiro:
  - Calendário - Exibe o calendário e lida com eventos.
  - Modal - Exibe os detalhes dos eventos do dia.
 
